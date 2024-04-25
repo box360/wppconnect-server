@@ -22,6 +22,8 @@ import chatWootClient from './chatWootClient';
 import { autoDownload, callWebHook, startHelper } from './functions';
 import { clientsArray, eventEmitter } from './sessionUtil';
 import Factory from './tokenStore/factory';
+import config from '../config';
+import fs from 'fs';
 
 export default class CreateSessionUtil {
   startChatWootClient(client: any) {
@@ -322,5 +324,49 @@ export default class CreateSessionUtil {
         session: session,
       } as any;
     return client;
+  }
+
+  //######################################## DELETE SESSION UTIL - NEW METHOD ##############################
+  async deleteSessionUtil(
+    req: any,
+    clientsArray: any,
+    session: string,
+    res?: any
+  ) {
+    try {
+      let client = (this.getClient(session) as any) || null;
+
+      const tokenStore = new Factory();
+      const myTokenStore = tokenStore.createTokenStory(client);
+
+      await myTokenStore.removeToken(session);
+
+      const pathUserData = config.customUserDataDir + req.session;
+      const pathTokens = __dirname + `../../../tokens/${req.session}.data.json`;
+
+      if (fs.existsSync(pathUserData)) {
+        await fs.promises.rm(pathUserData, {
+          recursive: true,
+          maxRetries: 5,
+          force: true,
+          retryDelay: 1000,
+        });
+      }
+      if (fs.existsSync(pathTokens)) {
+        await fs.promises.rm(pathTokens, {
+          recursive: true,
+          maxRetries: 5,
+          force: true,
+          retryDelay: 1000,
+        });
+      }
+    } catch (error) {
+      req.logger.error(error);
+    }
+  }
+
+  //############################# DELETE DATA - NEW METHOD ################################
+  async deleteData(req: Request, session: string, res?: any) {
+    await this.deleteSessionUtil(req, clientsArray, session, res);
   }
 }

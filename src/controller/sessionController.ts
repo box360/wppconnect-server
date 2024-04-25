@@ -729,3 +729,32 @@ export async function editBusinessProfile(req: Request, res: Response) {
     });
   }
 }
+
+//############################# CLOSE PENDING SESSION - NEW METHOD #####################################
+export async function closePendingSession(req: Request, res: Response) {
+  const session = req.session;
+  try {
+    if (req.client && req.client.status !== 'CLOSED') {
+      await req.client.logout();
+      deleteSessionOnArray(req.session);
+
+      setTimeout(async () => {
+        req.io.emit('whatsapp-status', false);
+        callWebHook(req.client, req, 'logoutsession', {
+          message: `Session: ${session} logged out`,
+          connected: false,
+        });
+      }, 500);
+    }
+
+    await SessionUtil.deleteData(req, session, res);
+
+    return await res
+      .status(200)
+      .json({ message: 'Session successfully deleted.' });
+  } catch (e) {
+    return await res
+      .status(500)
+      .json({ message: 'Error deleting session.', e });
+  }
+}

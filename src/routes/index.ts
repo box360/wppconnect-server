@@ -91,6 +91,11 @@ routes.post(
   SessionController.closeSession
 );
 routes.post(
+  '/api/:session/close-pending-session',
+  verifyToken,
+  SessionController.closePendingSession
+);
+routes.post(
   '/api/:session/subscribe-presence',
   verifyToken,
   SessionController.subscribePresence
