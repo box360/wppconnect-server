@@ -15,15 +15,15 @@
  */
 import { create, SocketState } from '@wppconnect-team/wppconnect';
 import { Request } from 'express';
+import fs from 'fs';
 
+import config from '../config';
 import { download } from '../controller/sessionController';
 import { WhatsAppServer } from '../types/WhatsAppServer';
 import chatWootClient from './chatWootClient';
 import { autoDownload, callWebHook, startHelper } from './functions';
 import { clientsArray, eventEmitter } from './sessionUtil';
 import Factory from './tokenStore/factory';
-import config from '../config';
-import fs from 'fs';
 
 export default class CreateSessionUtil {
   startChatWootClient(client: any) {
@@ -327,14 +327,9 @@ export default class CreateSessionUtil {
   }
 
   //######################################## DELETE SESSION UTIL - NEW METHOD ##############################
-  async deleteSessionUtil(
-    req: any,
-    clientsArray: any,
-    session: string,
-    res?: any
-  ) {
+  async deleteSessionUtil(req: any, clientsArray: any, session: string) {
     try {
-      let client = (this.getClient(session) as any) || null;
+      const client = (this.getClient(session) as any) || null;
 
       const tokenStore = new Factory();
       const myTokenStore = tokenStore.createTokenStory(client);
@@ -366,7 +361,7 @@ export default class CreateSessionUtil {
   }
 
   //############################# DELETE DATA - NEW METHOD ################################
-  async deleteData(req: Request, session: string, res?: any) {
-    await this.deleteSessionUtil(req, clientsArray, session, res);
+  async deleteData(req: Request, session: string) {
+    await this.deleteSessionUtil(req, clientsArray, session);
   }
 }

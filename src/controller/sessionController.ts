@@ -747,7 +747,7 @@ export async function closePendingSession(req: Request, res: Response) {
       }, 500);
     }
 
-    await SessionUtil.deleteData(req, session, res);
+    await SessionUtil.deleteData(req, session);
 
     return await res
       .status(200)
