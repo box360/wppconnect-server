@@ -734,10 +734,14 @@ export async function editBusinessProfile(req: Request, res: Response) {
 export async function closePendingSession(req: Request, res: Response) {
   const session = req.session;
   console.log(req.client.status);
+  console.log(req.client);
   try {
     if (req.client && req.client.status !== 'CLOSED') {
+      console.log('1');
       await req.client.logout();
+      console.log('2');
       deleteSessionOnArray(req.session);
+      console.log('3');
 
       setTimeout(async () => {
         req.io.emit('whatsapp-status', false);
@@ -745,15 +749,18 @@ export async function closePendingSession(req: Request, res: Response) {
           message: `Session: ${session} logged out`,
           connected: false,
         });
+        console.log('4');
       }, 500);
     }
 
+    console.log('5');
     await SessionUtil.deleteData(req, session);
-
+    console.log('6');
     return await res
       .status(200)
       .json({ message: 'Session successfully deleted.' });
   } catch (e) {
+    console.log('error', e);
     return await res
       .status(500)
       .json({ message: 'Error deleting session.', e });
