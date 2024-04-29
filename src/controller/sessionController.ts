@@ -738,7 +738,9 @@ export async function closePendingSession(req: Request, res: Response) {
   try {
     if (req.client && req.client.status !== 'CLOSED') {
       console.log('1');
-      await req.client.logout();
+      if (req.client.logout !== undefined) {
+        await req.client.logout();
+      }
       console.log('2');
       deleteSessionOnArray(req.session);
       console.log('3');
