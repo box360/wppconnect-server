@@ -733,8 +733,6 @@ export async function editBusinessProfile(req: Request, res: Response) {
 //############################# CLOSE PENDING SESSION - NEW METHOD #####################################
 export async function closePendingSession(req: Request, res: Response) {
   const session = req.session;
-  console.log(req.client.status);
-  console.log(req.client);
   try {
     if (req.client && req.client.status !== 'CLOSED') {
       console.log('1');
