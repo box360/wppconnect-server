@@ -330,32 +330,42 @@ export default class CreateSessionUtil {
   async deleteSessionUtil(req: any, clientsArray: any, session: string) {
     try {
       const client = (this.getClient(session) as any) || null;
+      console.log('1,', client);
 
       const tokenStore = new Factory();
       const myTokenStore = tokenStore.createTokenStory(client);
+      console.log('2,', myTokenStore);
 
       await myTokenStore.removeToken(session);
+      console.log('3,', myTokenStore);
 
       const pathUserData = config.customUserDataDir + req.session;
       const pathTokens = __dirname + `../../../tokens/${req.session}.data.json`;
+      console.log('4,', pathUserData);
 
       if (fs.existsSync(pathUserData)) {
+        console.log('4.1');
         await fs.promises.rm(pathUserData, {
           recursive: true,
           maxRetries: 5,
           force: true,
           retryDelay: 1000,
         });
+        console.log('4.2');
       }
+      console.log('5');
       if (fs.existsSync(pathTokens)) {
+        console.log('5.1');
         await fs.promises.rm(pathTokens, {
           recursive: true,
           maxRetries: 5,
           force: true,
           retryDelay: 1000,
         });
+        console.log('5.2');
       }
     } catch (error) {
+      console.log('6,', error);
       req.logger.error(error);
     }
   }
