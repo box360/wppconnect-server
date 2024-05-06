@@ -242,7 +242,10 @@ export async function closeSession(req: Request, res: Response) {
     } else {
       (clientsArray as any)[session] = { status: null };
 
-      await req.client.close();
+      if (req.client.close() !== undefined) {
+        await req.client.close();
+      }
+
       req.io.emit('whatsapp-status', false);
       callWebHook(req.client, req, 'closesession', {
         message: `Session: ${session} disconnected`,
