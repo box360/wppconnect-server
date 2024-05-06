@@ -242,7 +242,7 @@ export async function closeSession(req: Request, res: Response) {
     } else {
       (clientsArray as any)[session] = { status: null };
 
-      if (req.client.close() !== undefined) {
+      if (req.client.close !== undefined) {
         await req.client.close();
       }
 
